@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <img id='img' src="https://login.weixin.qq.com/qrcode/{{ uuid }}">
+    </div>
+
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script>
+        $(function () {
+            checkLogin();
+        });
+
+        function checkLogin() {
+            $.ajax({
+                url: '/check_login.html',
+                type: 'get',
+                data: {},
+                dataType: 'JSON',
+                success:function (arg) {
+                    console.log(arg);
+                    if (arg.code == 408){       //监测是否有人扫码，没人扫--长轮询，有人扫---返回头像
+                        checkLogin();
+                    }else if(arg.code == 201){
+                        $('#img').attr('src', arg.data);
+                        checkLogin();
+                    }else {
+                        location.href = '/index.html'
+                    }
+                }
+            })
+        }
+    </script>
+</body>
+</html>
